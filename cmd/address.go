@@ -11,30 +11,44 @@ import (
 
 var addressCmd = &cobra.Command{
 	Use:   "add",
-	Short: "Create a new address",
+	Short: "Create a new address for a Wallet",
 	Run: func(cmd *cobra.Command, args []string) {
-		if args[0] == "" {
-			return
+		uuid, err := cmd.Flags().GetString("user")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		password, err := cmd.Flags().GetString("pass")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		coin, err := cmd.Flags().GetString("coin")
+		if err != nil {
+			log.Fatalln(err)
 		}
 
-		createAddress(args[1], args[3])
+		createAddress(uuid, password, coin)
 	},
 }
 
 func init(){
 	rootCmd.AddCommand(addressCmd)
 
-	addressCmd.Flags().String("user", "u", "pass user uuid")
-	addressCmd.Flags().String("coin", "c", "coin name (ETH, BNB)")
+	addressCmd.Flags().StringP("user", "u", "", "wallet uuid")
+	addressCmd.Flags().StringP("coin", "c", "", "coin name (ETH, BNB)")
+	addressCmd.Flags().StringP("pass", "p", "", "wallet password")
 }
 
-func createAddress(uuid string, coin string){
+func createAddress(uuid, pass, coin string){
 	var walletSvc wallet_cli.WalletStorage
 	walletSvc = repository.NewGormWallet()
 
 	wall, err :=  walletSvc.LIstWalletByUUID(uuid)
 	if err != nil {
 		log.Fatalln(err)
+	}
+
+	if err := wall.VerifyPassword(pass); err != nil {
+		log.Fatalln("password is wrong!")
 	}
 
 	var addressSvc wallet_cli.AddressStorage
