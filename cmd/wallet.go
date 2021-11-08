@@ -101,6 +101,6 @@ func createUser(password string) {
 		log.Fatalln(err)
 	}
 
-	log.Printf("Uuid:     %v\n", wall.Uuid())
-	log.Printf("Mnemonic: %v\n", wall.Mnemonic().Code())
+	fmt.Printf("Uuid:     %v\n", wall.Uuid())
+	fmt.Printf("Mnemonic: %v\n", wall.Mnemonic().Code())
 }
