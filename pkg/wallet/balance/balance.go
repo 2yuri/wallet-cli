@@ -16,7 +16,7 @@ func NewBalanceService() *BalanceService {
 	return &BalanceService{}
 }
 
-func (b *BalanceService)  GetBalance(a *wallet.Address) (*wallet.Balance, error) {
+func (b *BalanceService) GetBalance(a *wallet.Address) (*wallet.Balance, error) {
 	client, err := ethclient.Dial("https://bsc-dataseed.binance.org/")
 	if err != nil {
 		return nil, err
