@@ -3,7 +3,7 @@
 
 ## Installation
 ```
-$ go install -u github.com/hyperyuri/wallet-cli
+$ go get -u github.com/hyperyuri/wallet-cli
 ```
 
 ## Usage:
