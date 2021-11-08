@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"log"
-	"wallet-cli/pkg/gorm/repository"
-	wallet_cli "wallet-cli/pkg/wallet"
-	"wallet-cli/pkg/wallet/balance"
-	"wallet-cli/pkg/wallet/mnemonic"
+	"github.com/hyperyuri/wallet-cli/pkg/gorm/repository"
+	wallet_cli "github.com/hyperyuri/wallet-cli/pkg/wallet"
+	"github.com/hyperyuri/wallet-cli/pkg/wallet/balance"
+	"github.com/hyperyuri/wallet-cli/pkg/wallet/mnemonic"
 )
 
 var wallCmd = &cobra.Command{
@@ -27,7 +27,7 @@ var listWallCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List your wallet by UUID",
 	Run: func(cmd *cobra.Command, args []string) {
-		uuid, err := cmd.Flags().GetString("uuid")
+		uuid, err := cmd.Flags().GetString("wallet")
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -82,8 +82,8 @@ func init() {
 	rootCmd.AddCommand(wallCmd)
 	rootCmd.AddCommand(listWallCmd)
 
-	wallCmd.Flags().StringP("pass", "p", "", "wallet pass")
-	listWallCmd.Flags().StringP( "uuid", "u", "","waallet uuid")
+	wallCmd.Flags().StringP("pass", "p", "", "wallet password")
+	listWallCmd.Flags().StringP( "wallet", "w", "","waallet uuid")
 	listWallCmd.Flags().StringP("pass", "p", "","wallet password")
 }
 

@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"wallet-cli/pkg/gorm"
-	"wallet-cli/pkg/gorm/models"
-	wallet_cli "wallet-cli/pkg/wallet"
+	"github.com/hyperyuri/wallet-cli/pkg/gorm"
+	"github.com/hyperyuri/wallet-cli/pkg/gorm/models"
+	wallet_cli "github.com/hyperyuri/wallet-cli/pkg/wallet"
 )
 
 type GormWallet struct {

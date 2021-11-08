@@ -1,6 +1,6 @@
 package main
 
-import "wallet-cli/cmd"
+import "github.com/hyperyuri/wallet-cli/cmd"
 
 func main() {
 	cmd.Execute()

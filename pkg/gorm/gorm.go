@@ -4,7 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"log"
-	"wallet-cli/pkg/gorm/models"
+	"github.com/hyperyuri/wallet-cli/pkg/gorm/models"
 )
 
 var DB *gorm.DB

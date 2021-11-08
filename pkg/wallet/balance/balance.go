@@ -6,7 +6,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"math"
 	"math/big"
-	"wallet-cli/pkg/wallet"
+	"github.com/hyperyuri/wallet-cli/pkg/wallet"
 )
 
 type BalanceService struct {

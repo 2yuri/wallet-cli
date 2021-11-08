@@ -1,4 +1,4 @@
-module wallet-cli
+module github.com/hyperyuri/wallet-cli
 
 go 1.17
 

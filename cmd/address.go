@@ -4,16 +4,16 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"strconv"
-	"wallet-cli/pkg/gorm/repository"
-	wallet_cli "wallet-cli/pkg/wallet"
-	"wallet-cli/pkg/wallet/address"
+	"github.com/hyperyuri/wallet-cli/pkg/gorm/repository"
+	wallet_cli "github.com/hyperyuri/wallet-cli/pkg/wallet"
+	"github.com/hyperyuri/wallet-cli/pkg/wallet/address"
 )
 
 var addressCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Create a new address for a Wallet",
 	Run: func(cmd *cobra.Command, args []string) {
-		uuid, err := cmd.Flags().GetString("user")
+		uuid, err := cmd.Flags().GetString("wallet")
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -33,7 +33,7 @@ var addressCmd = &cobra.Command{
 func init(){
 	rootCmd.AddCommand(addressCmd)
 
-	addressCmd.Flags().StringP("user", "u", "", "wallet uuid")
+	addressCmd.Flags().StringP("wallet", "w", "", "wallet uuid")
 	addressCmd.Flags().StringP("coin", "c", "", "coin name (ETH, BNB)")
 	addressCmd.Flags().StringP("pass", "p", "", "wallet password")
 }
