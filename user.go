@@ -11,7 +11,7 @@ type User struct {
 	uuid string
 	password string
 	mnemonic *Mnemonic
-	wallets	[]*Wallet
+	adresses	[]*Address
 }
 
 func (u *User) Id() int64 {
@@ -30,12 +30,12 @@ func (u *User) Mnemonic() *Mnemonic {
 	return u.mnemonic
 }
 
-func (u *User) Wallets() []*Wallet {
-	return u.wallets
+func (u *User) Wallets() []*Address {
+	return u.adresses
 }
 
-func NewUserCompelted(id int64, uuid string, password string, mnenonics *Mnemonic, wallets []*Wallet) *User {
-	return &User{id: id, uuid: uuid, password: password, mnemonic: mnenonics, wallets: wallets}
+func NewUserCompelted(id int64, uuid string, password string, mnenonics *Mnemonic, adresses []*Address) *User {
+	return &User{id: id, uuid: uuid, password: password, mnemonic: mnenonics, adresses: adresses}
 }
 
 func NewUser(password string, generator MnemonicGenerator) (*User, error) {
@@ -72,7 +72,7 @@ func (u *User) VerifyPassword(providedPassword string) error {
 	return nil
 }
 
-func (u *User) AddWallet(wallet *Wallet) {
-	u.wallets = append(u.wallets, wallet)
+func (u *User) AddAddress(wallet *Address) {
+	u.adresses = append(u.adresses, wallet)
 }
 
