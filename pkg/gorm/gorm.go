@@ -12,7 +12,7 @@ var DB *gorm.DB
 func init(){
 	db, err := gorm.Open("sqlite3", "./db.db")
 	if err != nil {
-		log.Fatal("F caiu o banco")
+		log.Fatalf("cannot connect to db: %v\n", err)
 	}
 
 	DB = db
