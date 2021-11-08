@@ -1,4 +1,4 @@
-package wallet_cli
+package wallet
 
 type MnemonicGenerator interface {
 	Generate() (*Mnemonic, error)

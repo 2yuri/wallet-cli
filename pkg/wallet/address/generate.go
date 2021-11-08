@@ -19,7 +19,7 @@ func (a *AddressService) Generate(men string, derivation string, network string)
 		return "", err
 	}
 
-	path := hdwallet.MustParseDerivationPath(fmt.Sprintf("m/44'/%s'/0'/0/%s", network, derivation))
+	path := hdwallet.MustParseDerivationPath(fmt.Sprintf("m/44'/%s'/0'/0/%s", CoinMAP[network], derivation))
 	account, err := wallet.Derive(path, false)
 	if err != nil {
 		return "", err

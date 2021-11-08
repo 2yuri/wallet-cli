@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"math/big"
 	"strings"
-	wallet_cli "wallet-cli"
+	wallet_cli "wallet-cli/pkg/wallet"
 )
 
 type MnemonicService struct {
