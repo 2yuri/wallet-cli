@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/hyperyuri/wallet-cli/pkg/gorm/repository"
 	wallet_cli "github.com/hyperyuri/wallet-cli/pkg/wallet"
 	"github.com/hyperyuri/wallet-cli/pkg/wallet/address"
 	"github.com/spf13/cobra"
@@ -34,10 +33,7 @@ func init(){
 }
 
 func createAddress(uuid, pass string){
-	var walletSvc wallet_cli.WalletStorage
-	walletSvc = repository.NewGormWallet()
-
-	wall, err :=  walletSvc.LIstWalletByUUID(uuid)
+	wall, err :=  walletRepo.LIstWalletByUUID(uuid)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -46,10 +42,7 @@ func createAddress(uuid, pass string){
 		log.Fatalln("password is wrong!")
 	}
 
-	var addressSvc wallet_cli.AddressStorage
-	addressSvc = repository.NewGormAddress()
-
-	addr, err :=  addressSvc.GetAdresses(wall)
+	addr, err :=  addressRepo.GetAddresses(wall)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -66,7 +59,6 @@ func createAddress(uuid, pass string){
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 
 	err = addressSvc.SaveAddress(wall, add)
 	if err != nil {

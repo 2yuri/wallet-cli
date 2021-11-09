@@ -6,6 +6,11 @@ type TransactionStorage interface {
 	FindTransactions(items int) ([]Transaction,error)
 }
 
+type TransactionActions interface {
+	SendTransaction(t *Transaction) error
+	GetFee(t *Transaction) (string, error)
+}
+
 type Transaction struct {
 	txid string
 	amount string
@@ -16,6 +21,18 @@ type Transaction struct {
 	toAddress string
 	currency *Currency
 	address *Address
+}
+
+func NewTransaction(amount string, toAddress string, currency *Currency, address *Address) *Transaction {
+	return &Transaction{amount: amount, status: "pending", toAddress: toAddress, currency: currency, address: address}
+}
+
+func (t Transaction) GetFee(actions TransactionActions) (string, error) {
+	return "0", nil
+}
+
+func (t Transaction) SendTransaction(actions TransactionActions) error {
+	return nil
 }
 
 func (t Transaction) Txid() string {
@@ -54,6 +71,6 @@ func (t Transaction) Address() *Address {
 	return t.address
 }
 
-func NewTransaction(txid string, amount string, fee string, status string, blockHash string, blockConfirmatios string, toAddress string, currency *Currency, address *Address) *Transaction {
+func NewTransactionWithFields(txid string, amount string, fee string, status string, blockHash string, blockConfirmatios string, toAddress string, currency *Currency, address *Address) *Transaction {
 	return &Transaction{txid: txid, amount: amount, fee: fee, status: status, blockHash: blockHash, blockConfirmatios: blockConfirmatios, toAddress: toAddress, currency: currency, address: address}
 }

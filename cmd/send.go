@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/hyperyuri/wallet-cli/pkg/gorm/repository"
 	wallet_cli "github.com/hyperyuri/wallet-cli/pkg/wallet"
 	"github.com/spf13/cobra"
 	"log"
+	"math/big"
 )
 
 var sendCmd = &cobra.Command{
@@ -27,12 +27,20 @@ var sendCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
-		budge, err := cmd.Flags().GetString("budge")
+		budge, err := cmd.Flags().GetString("amount")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		currency, err := cmd.Flags().GetString("currency")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		network, err := cmd.Flags().GetString("network")
 		if err != nil {
 			log.Fatalln(err)
 		}
 
-		sendTransaction(uuid, password, from, to, budge)
+		sendTransaction(uuid, password, from, to, budge, currency, network)
 	},
 }
 
@@ -43,23 +51,89 @@ func init(){
 	sendCmd.Flags().StringP("pass", "p", "", "wallet password")
 	sendCmd.Flags().StringP("from", "f", "", "wallet address")
 	sendCmd.Flags().StringP("to", "t", "", "adress")
-	sendCmd.Flags().StringP("budge", "b", "", "value")
+	sendCmd.Flags().StringP("amount", "a", "", "amount to be sended")
+	sendCmd.Flags().StringP("currency", "c", "", "currency")
+	sendCmd.Flags().StringP("network", "n", "", "network")
 }
 
-func sendTransaction(uuid, pass, from, to, budge string){
-	var walletSvc wallet_cli.WalletStorage
-	walletSvc = repository.NewGormWallet()
-
-	wall, err :=  walletSvc.LIstWalletByUUID(uuid)
+func sendTransaction(uuid, pass, from, to, amount, currency, network string){
+	wall, err :=  walletRepo.LIstWalletByUUID(uuid)
 	if err != nil {
 		log.Fatalln(err)
+	}
+
+	amountInt, ok := new(big.Int).SetString(amount, 10)
+	if !ok {
+		log.Fatalln("cannot convert your amount")
 	}
 
 	if err := wall.VerifyPassword(pass); err != nil {
 		log.Fatalln("password is wrong!")
 	}
-	
-	log.Fatalln(wall)
+
+	cur, err := currRepo.GetCurrency(network, currency)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	addr, err := addressRepo.GetAddressByCode(from, wall.Id())
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	trx := wallet_cli.NewTransaction(amount, to, cur, addr)
+
+	fee, err := trx.GetFee(trxSvc)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	feeInt, ok := new(big.Int).SetString(fee, 10)
+	if !ok {
+		log.Fatalln("cannot get your balance")
+	}
+
+	balance, err := balanceSvc.GetBalance(addr, cur)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	balanceInt, ok := new(big.Int).SetString(balance.Confimated(), 10)
+	if !ok {
+		log.Fatalln("cannot get your balance")
+	}
+
+	switch getFeeOption(fee) {
+	case 1:
+		if	amountInt.Cmp(balanceInt) > 0{
+			log.Fatalln("insufficient founds!")
+		}
+		if	feeInt.Cmp(amountInt) > 0{
+			log.Fatalln("cannot continue with operation, fee is bigger than amount")
+		}
 
 
+
+	case 2:
+		if	new(big.Int).Add(amountInt, feeInt).Cmp(balanceInt) > 0 {
+			log.Fatalln("insufficient founds for this operation!")
+		}
+
+
+	case 3:
+		log.Fatalln("operation cancelled.")
+	default:
+		log.Fatalln("invalid option")
+	}
+
+}
+
+func getFeeOption(fee string) int {
+	log.Printf("Fee is: %v\n", fee)
+	log.Println("Select you option:")
+	log.Println("1 - Accept discounting fee from amount.")
+	log.Println("2 - Accept discounting fee from my balance.")
+	log.Println("3 - Cancel transaction.")
+
+	return 0
 }

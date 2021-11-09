@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/hyperyuri/wallet-cli/pkg/gorm/repository"
 	wallet_cli "github.com/hyperyuri/wallet-cli/pkg/wallet"
-	"github.com/hyperyuri/wallet-cli/pkg/wallet/balance"
 	"github.com/hyperyuri/wallet-cli/pkg/wallet/mnemonic"
 	"github.com/spf13/cobra"
 	"log"
@@ -44,14 +43,13 @@ var listWallCmd = &cobra.Command{
 			log.Fatalln(err)
 		}
 
-		var balanceSvc wallet_cli.BalanceInfo
-		balanceSvc = balance.NewBalanceService()
-
-		var walletSvc wallet_cli.WalletStorage
-		walletSvc = repository.NewGormWallet()
-		wallet, err := walletSvc.LIstWalletByUUID(uuid)
+		wallet, err := walletRepo.LIstWalletByUUID(uuid)
 		if err != nil {
 			log.Fatalln(err)
+		}
+
+		if err := wallet.VerifyPassword(password); err != nil {
+			log.Fatalln("password is wrong!")
 		}
 
 		var currSvc wallet_cli.CurrencyStorage
@@ -61,17 +59,10 @@ var listWallCmd = &cobra.Command{
 			log.Fatalln(err)
 		}
 
-		if err := wallet.VerifyPassword(password); err != nil {
-			log.Fatalln("password is wrong!")
-		}
-
-		var addressSvc wallet_cli.AddressStorage
-		addressSvc = repository.NewGormAddress()
-
 		fmt.Printf("Uuid:     %s\n", wallet.Uuid())
 		fmt.Printf("Menmonic: %s\n", wallet.Mnemonic().Code())
 
-		addresses, err := addressSvc.GetAdresses(wallet)
+		addresses, err := addressRepo.GetAddresses(wallet)
 		if err != nil {
 			log.Fatalln("cannot get adresses")
 		}
@@ -111,10 +102,7 @@ func createUser(password string) {
 		log.Fatalln(err)
 	}
 
-	var walletSvc wallet_cli.WalletStorage
-	walletSvc = repository.NewGormWallet()
-
-	err = walletSvc.SaveWallet(wall)
+	err = walletRepo.SaveWallet(wall)
 	if err != nil {
 		log.Fatalln(err)
 	}

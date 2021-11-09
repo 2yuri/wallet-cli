@@ -6,7 +6,8 @@ type AddressGenerator interface {
 
 type AddressStorage interface {
 	SaveAddress(wallet *Wallet, address *Address) error
-	GetAdresses(wallet *Wallet) ([]Address,error)
+	GetAddresses(wallet *Wallet) ([]Address,error)
+	GetAddressByCode(code string, walletId uint) (*Address, error)
 }
 
 type Address struct {

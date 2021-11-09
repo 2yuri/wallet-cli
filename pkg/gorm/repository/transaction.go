@@ -15,7 +15,17 @@ type GormTransaction struct {
 }
 
 func (g GormTransaction) CreateTransaction(t *wallet_cli.Transaction) error {
-	panic("implement me")
+	return gorm.DB.Create(&models.Transaction{
+		Txid:              t.Txid(),
+		Amount:            t.Amount(),
+		Fee:               t.Fee(),
+		Status:            "pending",
+		BlockHash:         t.BlockHash(),
+		BlockConfirmatios: t.BlockConfirmatios(),
+		ToAddress:         t.ToAddress(),
+		CurrencyID:        t.Currency().Id(),
+		AddressID:         t.Address().Id(),
+	}).Error
 }
 
 func (g GormTransaction) UpdateTranscations() error {
@@ -79,10 +89,27 @@ func (g GormTransaction) FindTransactions(items int, status string) ([]wallet_cl
 		return nil, err
 	}
 
-	var transactios []wallet_cli.Transaction
+	var transactions []wallet_cli.Transaction
 	for _, v := range query {
-		transactios = append(transactios, wallet_cli.NewTransaction(v.Txid, v.Amount, v.Fee, v.Status, v.BlockHash, v.BlockConfirmatios, v.ToAddress))
+		var cur models.Currency
+		var addr models.Address
+
+		err := gorm.DB.First(&cur, "id = ?", v.CurrencyID).Error
+		if err != nil {
+			return nil, err
+		}
+		err = gorm.DB.First(&addr, "id = ?", v.AddressID).Error
+		if err != nil {
+			return  nil, err
+		}
+
+		currency := wallet_cli.NewCurrency(cur.ID, cur.Symbol, cur.Network, cur.Type, cur.URI, cur.ContractAddress)
+		address := wallet_cli.NewAddressWithFields(addr.ID, addr.Code, addr.Derivation)
+
+		transactions = append(transactions, *wallet_cli.NewTransactionWithFields(v.Txid, v.Amount, v.Fee, v.Status, v.BlockHash, v.BlockConfirmatios, v.ToAddress, currency, address))
 	}
+
+	return transactions, nil
 }
 
 func NewGormTransaction() *GormTransaction {
