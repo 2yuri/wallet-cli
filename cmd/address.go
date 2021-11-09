@@ -60,7 +60,7 @@ func createAddress(uuid, pass string){
 		log.Fatalln(err)
 	}
 
-	err = addressSvc.SaveAddress(wall, add)
+	err = addressRepo.SaveAddress(wall, add)
 	if err != nil {
 		log.Fatalln(err)
 	}

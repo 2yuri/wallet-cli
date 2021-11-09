@@ -1,14 +1,17 @@
 package cmd
 
 import (
+	"fmt"
 	wallet_cli "github.com/hyperyuri/wallet-cli/pkg/wallet"
+	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"log"
 	"math/big"
+	"strconv"
 )
 
 var sendCmd = &cobra.Command{
-	Use:   "add",
+	Use:   "send",
 	Short: "Create a new address for a Wallet",
 	Run: func(cmd *cobra.Command, args []string) {
 		uuid, err := cmd.Flags().GetString("wallet")
@@ -129,11 +132,23 @@ func sendTransaction(uuid, pass, from, to, amount, currency, network string){
 }
 
 func getFeeOption(fee string) int {
-	log.Printf("Fee is: %v\n", fee)
-	log.Println("Select you option:")
-	log.Println("1 - Accept discounting fee from amount.")
-	log.Println("2 - Accept discounting fee from my balance.")
-	log.Println("3 - Cancel transaction.")
+	fmt.Printf("Your transaction fee is %v\n\n", fee)
+	fmt.Println("1 - Accept discounting fee from amount.")
+	fmt.Println("2 - Accept discounting fee from balance.")
+	fmt.Printf("3 - Cancel transaction.\n\n")
 
-	return 0
+	prompt := promptui.Prompt{
+		Label: "Select your option",
+	}
+	result, err := prompt.Run()
+	if err != nil {
+		log.Fatalf("Prompt failed %v\n", err)
+	}
+
+	i, err := strconv.Atoi(result)
+	if err != nil {
+		log.Fatalln("value is not a number", err)
+	}
+
+	return i
 }
