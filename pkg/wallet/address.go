@@ -1,7 +1,7 @@
 package wallet
 
 type AddressGenerator interface {
-	Generate(men string, derivation string, network string) (string, error)
+	Generate(men string, derivation string) (string, error)
 }
 
 type AddressStorage interface {
@@ -12,27 +12,22 @@ type AddressStorage interface {
 type Address struct {
 	code string
 	derivation string
-	network string
 }
 
 func (a Address) Derivation() string {
 	return a.derivation
 }
 
-func (a Address) Network() string {
-	return a.network
-}
-
-func NewAddressWithFields(code string, derivation string, network string) *Address {
-	return &Address{code: code, derivation: derivation, network: network}
+func NewAddressWithFields(code string, derivation string) *Address {
+	return &Address{code: code, derivation: derivation}
 }
 
 func (a Address) Code() string {
 	return a.code
 }
 
-func NewAddress(men string, derivation string, network string, generator AddressGenerator) (*Address, error){
-	add, err := generator.Generate(men, derivation, network)
+func NewAddress(men string, derivation string, generator AddressGenerator) (*Address, error){
+	add, err := generator.Generate(men, derivation)
 	if err != nil {
 		return nil, err
 	}
@@ -40,6 +35,5 @@ func NewAddress(men string, derivation string, network string, generator Address
 	return &Address{
 		code: add,
 		derivation: derivation,
-		network: network,
 	}, nil
 }

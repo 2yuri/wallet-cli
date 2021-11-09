@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"log"
 	"github.com/hyperyuri/wallet-cli/pkg/gorm/repository"
 	wallet_cli "github.com/hyperyuri/wallet-cli/pkg/wallet"
 	"github.com/hyperyuri/wallet-cli/pkg/wallet/balance"
 	"github.com/hyperyuri/wallet-cli/pkg/wallet/mnemonic"
+	"github.com/spf13/cobra"
+	"log"
 )
 
 var wallCmd = &cobra.Command{
@@ -35,6 +35,14 @@ var listWallCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
+		currency, err := cmd.Flags().GetString("currency")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		network, err := cmd.Flags().GetString("network")
+		if err != nil {
+			log.Fatalln(err)
+		}
 
 		var balanceSvc wallet_cli.BalanceInfo
 		balanceSvc = balance.NewBalanceService()
@@ -42,6 +50,13 @@ var listWallCmd = &cobra.Command{
 		var walletSvc wallet_cli.WalletStorage
 		walletSvc = repository.NewGormWallet()
 		wallet, err := walletSvc.LIstWalletByUUID(uuid)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		var currSvc wallet_cli.CurrencyStorage
+		currSvc = repository.NewGormTransaction()
+		c, err := currSvc.GetCurrency(network, currency)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -62,13 +77,12 @@ var listWallCmd = &cobra.Command{
 		}
 
 		for _, v := range addresses {
-			b, err := balanceSvc.GetBalance(&v)
+			b, err := balanceSvc.GetBalance(&v, c)
 			if err != nil {
 				log.Fatalf("cannot get balance: %v\n", err)
 			}
 
 			fmt.Printf("---------- WALLET: %v ----------\n", 1)
-			fmt.Printf("Network:             %s\n", v.Network())
 			fmt.Printf("Address:             %s\n", v.Code())
 			fmt.Printf("Balance Confirmed:   %s\n", b.Confimated())
 			fmt.Printf("Balance Unconfirmed: %s\n", b.Unconfirmed())
@@ -84,6 +98,8 @@ func init() {
 
 	wallCmd.Flags().StringP("pass", "p", "", "wallet password")
 	listWallCmd.Flags().StringP( "wallet", "w", "","waallet uuid")
+	listWallCmd.Flags().StringP( "currency", "c", "","currency name")
+	listWallCmd.Flags().StringP( "network", "n", "","currency network")
 	listWallCmd.Flags().StringP("pass", "p", "","wallet password")
 }
 

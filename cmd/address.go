@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
-	"log"
-	"strconv"
 	"github.com/hyperyuri/wallet-cli/pkg/gorm/repository"
 	wallet_cli "github.com/hyperyuri/wallet-cli/pkg/wallet"
 	"github.com/hyperyuri/wallet-cli/pkg/wallet/address"
+	"github.com/spf13/cobra"
+	"log"
+	"strconv"
 )
 
 var addressCmd = &cobra.Command{
@@ -21,12 +21,8 @@ var addressCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
-		coin, err := cmd.Flags().GetString("coin")
-		if err != nil {
-			log.Fatalln(err)
-		}
 
-		createAddress(uuid, password, coin)
+		createAddress(uuid, password)
 	},
 }
 
@@ -34,11 +30,10 @@ func init(){
 	rootCmd.AddCommand(addressCmd)
 
 	addressCmd.Flags().StringP("wallet", "w", "", "wallet uuid")
-	addressCmd.Flags().StringP("coin", "c", "", "coin name (ETH, BNB)")
 	addressCmd.Flags().StringP("pass", "p", "", "wallet password")
 }
 
-func createAddress(uuid, pass, coin string){
+func createAddress(uuid, pass string){
 	var walletSvc wallet_cli.WalletStorage
 	walletSvc = repository.NewGormWallet()
 
@@ -67,7 +62,7 @@ func createAddress(uuid, pass, coin string){
 		}
 	}
 
-	add, err := wallet_cli.NewAddress(wall.Mnemonic().Code(), strconv.Itoa(derivation + 1), coin, address.NewAddressService())
+	add, err := wallet_cli.NewAddress(wall.Mnemonic().Code(), strconv.Itoa(derivation + 1), address.NewAddressService())
 	if err != nil {
 		log.Fatalln(err)
 	}
