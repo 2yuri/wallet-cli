@@ -72,4 +72,6 @@ func createAddress(uuid, pass string){
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	log.Printf("Address: %v\n", add.Code())
 }

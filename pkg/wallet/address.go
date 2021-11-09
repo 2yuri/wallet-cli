@@ -10,20 +10,25 @@ type AddressStorage interface {
 }
 
 type Address struct {
+	id uint
 	code string
 	derivation string
+}
+
+func (a Address) Id() uint {
+	return a.id
 }
 
 func (a Address) Derivation() string {
 	return a.derivation
 }
 
-func NewAddressWithFields(code string, derivation string) *Address {
-	return &Address{code: code, derivation: derivation}
-}
-
 func (a Address) Code() string {
 	return a.code
+}
+
+func NewAddressWithFields(id uint, code string, derivation string) *Address {
+	return &Address{id: id, code: code, derivation: derivation}
 }
 
 func NewAddress(men string, derivation string, generator AddressGenerator) (*Address, error){
@@ -37,3 +42,5 @@ func NewAddress(men string, derivation string, generator AddressGenerator) (*Add
 		derivation: derivation,
 	}, nil
 }
+
+

@@ -11,6 +11,7 @@ type Transaction struct {
 	BlockHash string
 	BlockConfirmatios string
 	ToAddress string
+	CurrencyID uint
 	AddressID uint
 	CreatedAt time.Time
 	UpdatedAt    time.Time

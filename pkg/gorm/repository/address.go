@@ -31,7 +31,7 @@ func (g GormAddress) GetAdresses(wallet *wallet_cli.Wallet) ([]wallet_cli.Addres
 
 	var addresses []wallet_cli.Address
 	for _, v := range query {
-		addresses = append(addresses, *wallet_cli.NewAddressWithFields(v.Code, v.Derivation))
+		addresses = append(addresses, *wallet_cli.NewAddressWithFields(v.ID, v.Code, v.Derivation))
 	}
 
 	return addresses, nil

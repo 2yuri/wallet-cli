@@ -55,7 +55,7 @@ var listWallCmd = &cobra.Command{
 		}
 
 		var currSvc wallet_cli.CurrencyStorage
-		currSvc = repository.NewGormTransaction()
+		currSvc = repository.NewGormCurrency()
 		c, err := currSvc.GetCurrency(network, currency)
 		if err != nil {
 			log.Fatalln(err)
@@ -82,7 +82,9 @@ var listWallCmd = &cobra.Command{
 				log.Fatalf("cannot get balance: %v\n", err)
 			}
 
-			fmt.Printf("---------- WALLET: %v ----------\n", 1)
+			fmt.Printf("---------- ADDRESS: %v ----------\n", 1)
+			fmt.Printf("Coin:                %s\n", c.Symbol())
+			fmt.Printf("Network:             %s\n", c.Network())
 			fmt.Printf("Address:             %s\n", v.Code())
 			fmt.Printf("Balance Confirmed:   %s\n", b.Confimated())
 			fmt.Printf("Balance Unconfirmed: %s\n", b.Unconfirmed())

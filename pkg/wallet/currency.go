@@ -5,6 +5,7 @@ type CurrencyStorage interface {
 }
 
 type Currency struct {
+	id uint
 	symbol string
 	network string
 	tokenType string
@@ -31,7 +32,10 @@ func (c Currency) Uri() string {
 func (c Currency) ContractAddress() string {
 	return c.contractAddress
 }
+func (c *Currency) Id() uint {
+	return c.id
+}
 
-func NewCurrency(symbol string, network string, tokenType string, uri string, contractAddress string) *Currency {
-	return &Currency{symbol: symbol, network: network, tokenType: tokenType, uri: uri, contractAddress: contractAddress}
+func NewCurrency(id uint, symbol string, network string, tokenType string, uri string, contractAddress string) *Currency {
+	return &Currency{id:id,symbol: symbol, network: network, tokenType: tokenType, uri: uri, contractAddress: contractAddress}
 }

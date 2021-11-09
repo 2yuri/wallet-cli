@@ -32,7 +32,6 @@ var sendCmd = &cobra.Command{
 			log.Fatalln(err)
 		}
 
-
 		sendTransaction(uuid, password, from, to, budge)
 	},
 }

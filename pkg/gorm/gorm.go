@@ -44,12 +44,12 @@ func RunSeeds(){
 		log.Fatalln("cannot run seeds: ", err)
 	}
 
-	if err := CreateCurrency(tx,"BNB", "BNB", "https://bsc-dataseed.binance.org", "native", ""); err != nil {
+	if err := CreateCurrency(tx,"BNB", "BSC", "https://bsc-dataseed.binance.org", "native", ""); err != nil {
 		tx.Rollback()
 		log.Fatalln("cannot run seeds: ", err)
 	}
 
-	if err := CreateCurrency(tx,"USDT", "BNB", "https://bsc-dataseed.binance.org", "erc20", "0x55d398326f99059ff775485246999027b3197955"); err != nil {
+	if err := CreateCurrency(tx,"USDT", "BSC", "https://bsc-dataseed.binance.org", "erc20", "0x55d398326f99059ff775485246999027b3197955"); err != nil {
 		tx.Rollback()
 		log.Fatalln("cannot run seeds: ", err)
 	}
