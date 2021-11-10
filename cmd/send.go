@@ -65,7 +65,7 @@ func sendTransaction(uuid, pass, from, to, amount, currency, network string){
 		log.Fatalln(err)
 	}
 
-	amountInt, ok := new(big.Int).SetString(amount, 10)
+	amountInt, ok := new(big.Float).SetString(amount)
 	if !ok {
 		log.Fatalln("cannot convert your amount")
 	}
@@ -91,7 +91,7 @@ func sendTransaction(uuid, pass, from, to, amount, currency, network string){
 		log.Fatalln(err)
 	}
 
-	feeInt, ok := new(big.Int).SetString(fee, 10)
+	feeInt, ok := new(big.Float).SetString(fee)
 	if !ok {
 		log.Fatalln("cannot get your balance")
 	}
@@ -101,12 +101,18 @@ func sendTransaction(uuid, pass, from, to, amount, currency, network string){
 		log.Fatalln(err)
 	}
 
-	balanceInt, ok := new(big.Int).SetString(balance.Confimated(), 10)
+	balanceInt, ok := new(big.Float).SetString(balance.Confimated())
 	if !ok {
 		log.Fatalln("cannot get your balance")
 	}
 
-	switch getFeeOption(fee) {
+	coinType := "BNB"
+
+	if cur.Network() == "ETH" {
+		coinType = "ETH"
+	}
+
+	switch getFeeOption(fee, coinType) {
 	case 1:
 		if	amountInt.Cmp(balanceInt) > 0{
 			log.Fatalln("insufficient founds!")
@@ -115,10 +121,8 @@ func sendTransaction(uuid, pass, from, to, amount, currency, network string){
 			log.Fatalln("cannot continue with operation, fee is bigger than amount")
 		}
 
-
-
 	case 2:
-		if	new(big.Int).Add(amountInt, feeInt).Cmp(balanceInt) > 0 {
+		if	new(big.Float).Add(amountInt, feeInt).Cmp(balanceInt) > 0 {
 			log.Fatalln("insufficient founds for this operation!")
 		}
 
@@ -131,8 +135,8 @@ func sendTransaction(uuid, pass, from, to, amount, currency, network string){
 
 }
 
-func getFeeOption(fee string) int {
-	fmt.Printf("Your transaction fee is %v\n\n", fee)
+func getFeeOption(fee string, coin string) int {
+	fmt.Printf("Your transaction fee is %v %v\n\n", fee, coin)
 	fmt.Println("1 - Accept discounting fee from amount.")
 	fmt.Println("2 - Accept discounting fee from balance.")
 	fmt.Printf("3 - Cancel transaction.\n\n")

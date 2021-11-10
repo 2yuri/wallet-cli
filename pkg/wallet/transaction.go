@@ -27,47 +27,47 @@ func NewTransaction(amount string, toAddress string, currency *Currency, address
 	return &Transaction{amount: amount, status: "pending", toAddress: toAddress, currency: currency, address: address}
 }
 
-func (t Transaction) GetFee(actions TransactionActions) (string, error) {
-	return "0", nil
+func (t *Transaction) GetFee(actions TransactionActions) (string, error) {
+	return actions.GetFee(t)
 }
 
-func (t Transaction) SendTransaction(actions TransactionActions) error {
-	return nil
+func (t *Transaction) SendTransaction(actions TransactionActions) error {
+	return actions.SendTransaction(t)
 }
 
-func (t Transaction) Txid() string {
+func (t *Transaction) Txid() string {
 	return t.txid
 }
 
-func (t Transaction) Amount() string {
+func (t *Transaction) Amount() string {
 	return t.amount
 }
 
-func (t Transaction) Fee() string {
+func (t *Transaction) Fee() string {
 	return t.fee
 }
 
-func (t Transaction) Status() string {
+func (t *Transaction) Status() string {
 	return t.status
 }
 
-func (t Transaction) BlockHash() string {
+func (t *Transaction) BlockHash() string {
 	return t.blockHash
 }
 
-func (t Transaction) BlockConfirmatios() string {
+func (t *Transaction) BlockConfirmatios() string {
 	return t.blockConfirmatios
 }
 
-func (t Transaction) ToAddress() string {
+func (t *Transaction) ToAddress() string {
 	return t.toAddress
 }
 
-func (t Transaction) Currency() *Currency {
+func (t *Transaction) Currency() *Currency {
 	return t.currency
 }
 
-func (t Transaction) Address() *Address {
+func (t *Transaction) Address() *Address {
 	return t.address
 }
 

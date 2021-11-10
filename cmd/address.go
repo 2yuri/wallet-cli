@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	wallet_cli "github.com/hyperyuri/wallet-cli/pkg/wallet"
 	"github.com/hyperyuri/wallet-cli/pkg/wallet/address"
 	"github.com/spf13/cobra"
@@ -65,5 +66,5 @@ func createAddress(uuid, pass string){
 		log.Fatalln(err)
 	}
 
-	log.Printf("Address: %v\n", add.Code())
+	fmt.Printf("Address: %v\n", add.Code())
 }
