@@ -6,17 +6,43 @@
 $ go get -u github.com/hyperyuri/wallet-cli
 ```
 
+## Accepted Currencies
+
+- ETH/ETH
+- ETH/USDT
+- BSC/BNB
+- BSC/USDT
+
 ## Usage:
 
 1. Create your wallets
-<img width="755" alt="Captura de Tela 2021-11-08 às 13 15 34" src="https://user-images.githubusercontent.com/54409166/140778094-fde6a198-8d96-4a29-99b6-1603d70a9b8c.png">
-
+```
+$ wallet-cli create (--pass or -p) waller_password
+```
 
 2. Add a new address to your wallet
-<img width="755" alt="Captura de Tela 2021-11-08 às 13 13 50" src="https://user-images.githubusercontent.com/54409166/140777903-1307c8e7-b438-465e-880e-eb561e88b9f7.png">
+```
+$ wallet-cli add (--walet or -w) wallet_uuid (--pass or -p) wallet_password
+```
+3. List your addresses by your wallets and currencies
+```
+$ wallet-cli list (--walet or -w) wallet_uuid (--pass or -p) wallet_password (--network or -n) ETH (--currency or -c) USDT
+```
 
-3. List your addresses by your wallets
-<img width="755" alt="Captura de Tela 2021-11-08 às 13 14 20" src="https://user-images.githubusercontent.com/54409166/140777907-01d1be59-5667-478c-a5e1-690f0905633b.png">
+4. Send a transaction 
+```
+$ wallet-cli list (--walet or -w) wallet_uuid (--pass or -p) wallet_password (--network or -n) ETH (--currency or -c) USDT (--from or -f) address (--to or -t) to_address (--amount or -a) 1.3
+```
+
+- After send a transaction you need to confirm the fee amount and select your option
+- 1 - Accept discounting fee from balance.
+- 2 - Accept discounting fee from amount.
+- 3 - Cancel transaction.
+
+5. List your transactions
+```
+$ wallet-cli transactions (--walet or -w) wallet_uuid (--pass or -p) wallet_password (--count or -c) 10 (last 10 transaction) (--status or -s) (all, pending or done)
+```
 
 ## WIP
 - Send Method
