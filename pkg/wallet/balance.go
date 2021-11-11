@@ -1,7 +1,7 @@
 package wallet
 
 type BalanceInfo interface {
-	GetBalance(a *Address) (*Balance, error)
+	GetBalance(a *Address, c *Currency) (*Balance, error)
 }
 
 type Balance struct {

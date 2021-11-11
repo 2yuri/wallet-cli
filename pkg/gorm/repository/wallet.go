@@ -19,7 +19,7 @@ func (g GormWallet) LIstWalletByUUID(uuid string) (*wallet_cli.Wallet, error) {
 	}
 
 	return wallet_cli.NewWalletWithFields(
-		int64(query.ID), query.Uuid, query.Password, wallet_cli.NewMnemonic(query.Mnemonic), nil),nil
+		query.ID, query.Uuid, query.Password, wallet_cli.NewMnemonic(query.Mnemonic), nil),nil
 }
 
 func NewGormWallet() *GormWallet {
@@ -45,7 +45,7 @@ func (g GormWallet) ListWallets() ([]wallet_cli.Wallet, error) {
 	var wallets []wallet_cli.Wallet
 	for _, v := range query {
 		wallets = append(wallets, *wallet_cli.NewWalletWithFields(
-			int64(v.ID), v.Uuid, v.Password, wallet_cli.NewMnemonic(v.Mnemonic), nil))
+			v.ID, v.Uuid, v.Password, wallet_cli.NewMnemonic(v.Mnemonic), nil))
 	}
 
 	return wallets, nil

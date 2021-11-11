@@ -13,18 +13,18 @@ type WalletStorage interface {
 }
 
 type Wallet struct {
-	id int64
+	id uint
 	uuid string
 	password string
 	mnemonic *Mnemonic
 	adresses	[]*Address
 }
 
-func NewWalletWithFields(id int64, uuid string, password string, mnemonic *Mnemonic, adresses []*Address) *Wallet {
+func NewWalletWithFields(id uint, uuid string, password string, mnemonic *Mnemonic, adresses []*Address) *Wallet {
 	return &Wallet{id: id, uuid: uuid, password: password, mnemonic: mnemonic, adresses: adresses}
 }
 
-func (u *Wallet) Id() int64 {
+func (u *Wallet) Id() uint {
 	return u.id
 }
 

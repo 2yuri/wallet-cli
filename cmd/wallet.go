@@ -2,12 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"log"
 	"github.com/hyperyuri/wallet-cli/pkg/gorm/repository"
 	wallet_cli "github.com/hyperyuri/wallet-cli/pkg/wallet"
-	"github.com/hyperyuri/wallet-cli/pkg/wallet/balance"
 	"github.com/hyperyuri/wallet-cli/pkg/wallet/mnemonic"
+	"github.com/spf13/cobra"
+	"log"
 )
 
 var wallCmd = &cobra.Command{
@@ -35,13 +34,16 @@ var listWallCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
+		currency, err := cmd.Flags().GetString("currency")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		network, err := cmd.Flags().GetString("network")
+		if err != nil {
+			log.Fatalln(err)
+		}
 
-		var balanceSvc wallet_cli.BalanceInfo
-		balanceSvc = balance.NewBalanceService()
-
-		var walletSvc wallet_cli.WalletStorage
-		walletSvc = repository.NewGormWallet()
-		wallet, err := walletSvc.LIstWalletByUUID(uuid)
+		wallet, err := walletRepo.LIstWalletByUUID(uuid)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -50,25 +52,30 @@ var listWallCmd = &cobra.Command{
 			log.Fatalln("password is wrong!")
 		}
 
-		var addressSvc wallet_cli.AddressStorage
-		addressSvc = repository.NewGormAddress()
+		var currSvc wallet_cli.CurrencyStorage
+		currSvc = repository.NewGormCurrency()
+		c, err := currSvc.GetCurrency(network, currency)
+		if err != nil {
+			log.Fatalln("cannot get currency", err)
+		}
 
 		fmt.Printf("Uuid:     %s\n", wallet.Uuid())
 		fmt.Printf("Menmonic: %s\n", wallet.Mnemonic().Code())
 
-		addresses, err := addressSvc.GetAdresses(wallet)
+		addresses, err := addressRepo.GetAddresses(wallet)
 		if err != nil {
 			log.Fatalln("cannot get adresses")
 		}
 
-		for _, v := range addresses {
-			b, err := balanceSvc.GetBalance(&v)
+		for i, v := range addresses {
+			b, err := balanceSvc.GetBalance(&v, c)
 			if err != nil {
 				log.Fatalf("cannot get balance: %v\n", err)
 			}
 
-			fmt.Printf("---------- WALLET: %v ----------\n", 1)
-			fmt.Printf("Network:             %s\n", v.Network())
+			fmt.Printf("---------- ADDRESS: %v ----------\n", i + 1)
+			fmt.Printf("Currency:            %s\n", c.Symbol())
+			fmt.Printf("Network:             %s\n", c.Network())
 			fmt.Printf("Address:             %s\n", v.Code())
 			fmt.Printf("Balance Confirmed:   %s\n", b.Confimated())
 			fmt.Printf("Balance Unconfirmed: %s\n", b.Unconfirmed())
@@ -84,6 +91,8 @@ func init() {
 
 	wallCmd.Flags().StringP("pass", "p", "", "wallet password")
 	listWallCmd.Flags().StringP( "wallet", "w", "","waallet uuid")
+	listWallCmd.Flags().StringP( "currency", "c", "","currency name")
+	listWallCmd.Flags().StringP( "network", "n", "","currency network")
 	listWallCmd.Flags().StringP("pass", "p", "","wallet password")
 }
 
@@ -93,10 +102,7 @@ func createUser(password string) {
 		log.Fatalln(err)
 	}
 
-	var walletSvc wallet_cli.WalletStorage
-	walletSvc = repository.NewGormWallet()
-
-	err = walletSvc.SaveWallet(wall)
+	err = walletRepo.SaveWallet(wall)
 	if err != nil {
 		log.Fatalln(err)
 	}
