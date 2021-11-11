@@ -45,6 +45,6 @@ $ wallet-cli transactions (--walet or -w) wallet_uuid (--pass or -p) wallet_pass
 ```
 
 ## WIP
-- Send Method
-- Manage transactions
+- Add transaction for non native currencies (USDT)
+- Improve readme with images
 - Add more coins
