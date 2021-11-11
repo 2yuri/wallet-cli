@@ -41,13 +41,15 @@ func (b *BalanceService) GetBalance(a *wallet.Address, c *wallet.Currency) (*wal
 	ethValue := new(big.Float).Quo(fbalance, big.NewFloat(math.Pow10(18)))
 
 	pendingBalance, err := client.PendingBalanceAt(context.Background(), account)
+	pbalance := new(big.Float)
+	pbalance.SetString(pendingBalance.String())
+	ethPendingValue := new(big.Float).Quo(fbalance, big.NewFloat(math.Pow10(18)))
 
 	if err != nil {
 		return nil, err
 	}
 
-
-	return wallet.NewBalance(ethValue.String(), pendingBalance.String()), nil
+	return wallet.NewBalance(ethValue.String(), ethPendingValue.String()), nil
 }
 
 func (b *BalanceService) getContractBalance(a *wallet.Address, c *wallet.Currency) (*wallet.Balance, error) {

@@ -8,6 +8,7 @@ import (
 	"log"
 	"math/big"
 	"strconv"
+	"time"
 )
 
 var sendCmd = &cobra.Command{
@@ -64,14 +65,13 @@ func sendTransaction(uuid, pass, from, to, amount, currency, network string){
 	if err != nil {
 		log.Fatalln(err)
 	}
+	if err := wall.VerifyPassword(pass); err != nil {
+		log.Fatalln("password is wrong!")
+	}
 
 	amountInt, ok := new(big.Float).SetString(amount)
 	if !ok {
 		log.Fatalln("cannot convert your amount")
-	}
-
-	if err := wall.VerifyPassword(pass); err != nil {
-		log.Fatalln("password is wrong!")
 	}
 
 	cur, err := currRepo.GetCurrency(network, currency)
@@ -96,6 +96,10 @@ func sendTransaction(uuid, pass, from, to, amount, currency, network string){
 		log.Fatalln("cannot get your balance")
 	}
 
+	if	feeInt.Cmp(amountInt) > 0{
+		log.Fatalln("cannot continue with operation, fee is bigger than amount")
+	}
+
 	balance, err := balanceSvc.GetBalance(addr, cur)
 	if err != nil {
 		log.Fatalln(err)
@@ -114,20 +118,22 @@ func sendTransaction(uuid, pass, from, to, amount, currency, network string){
 
 	switch getFeeOption(fee, coinType) {
 	case 1:
-		if	amountInt.Cmp(balanceInt) > 0{
-			log.Fatalln("insufficient founds!")
-		}
-		if	feeInt.Cmp(amountInt) > 0{
-			log.Fatalln("cannot continue with operation, fee is bigger than amount")
-		}
-
-	case 2:
 		if	new(big.Float).Add(amountInt, feeInt).Cmp(balanceInt) > 0 {
 			log.Fatalln("insufficient founds for this operation!")
 		}
 
+		transaction, err := trx.SendTransaction(trxSvc, wall.Mnemonic().Code())
+		if err != nil {
+			log.Fatalln("cannot complete transaction: ", err)
+		}
 
-	case 3:
+		if err != trxRepo.CreateTransaction(transaction) {
+			log.Fatalln("cannot save at database")
+		}
+
+		fmt.Println("transaction succeed!!")
+		fmt.Printf("transactionID: %v\n", transaction.Txid())
+	case 2:
 		log.Fatalln("operation cancelled.")
 	default:
 		log.Fatalln("invalid option")
@@ -137,17 +143,29 @@ func sendTransaction(uuid, pass, from, to, amount, currency, network string){
 
 func getFeeOption(fee string, coin string) int {
 	fmt.Printf("Your transaction fee is %v %v\n\n", fee, coin)
-	fmt.Println("1 - Accept discounting fee from amount.")
-	fmt.Println("2 - Accept discounting fee from balance.")
-	fmt.Printf("3 - Cancel transaction.\n\n")
+	fmt.Println("1 - Accept discounting fee from balance.")
+	fmt.Printf("2 - Cancel transaction.\n\n")
 
-	prompt := promptui.Prompt{
-		Label: "Select your option",
+	ticker := time.NewTicker(5 * time.Second)
+	var result string
+
+	go func() {
+		var err error
+		prompt := promptui.Prompt{
+			Label: "Select your option",
+		}
+		result, err = prompt.Run()
+		if err != nil {
+			log.Fatalf("Prompt failed %v\n", err)
+		}
+	}()
+
+	<-ticker.C
+
+	if result == "" {
+		log.Fatalln("time out!")
 	}
-	result, err := prompt.Run()
-	if err != nil {
-		log.Fatalf("Prompt failed %v\n", err)
-	}
+
 
 	i, err := strconv.Atoi(result)
 	if err != nil {

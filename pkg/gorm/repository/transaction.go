@@ -20,8 +20,7 @@ func (g GormTransaction) CreateTransaction(t *wallet_cli.Transaction) error {
 		Amount:            t.Amount(),
 		Fee:               t.Fee(),
 		Status:            "pending",
-		BlockHash:         t.BlockHash(),
-		BlockConfirmatios: t.BlockConfirmatios(),
+		BlockConfirmatios: "0",
 		ToAddress:         t.ToAddress(),
 		CurrencyID:        t.Currency().Id(),
 		AddressID:         t.Address().Id(),
@@ -37,7 +36,7 @@ func (g GormTransaction) UpdateTranscations() error {
 
 	for _, v := range query {
 		var cur models.Currency
-		err := gorm.DB.First(&cur, "id  ?", v.CurrencyID).Error
+		err := gorm.DB.First(&cur, "id = ?", v.CurrencyID).Error
 		if err != nil {
 			return err
 		}
@@ -84,7 +83,13 @@ func (g GormTransaction) UpdateTranscations() error {
 func (g GormTransaction) FindTransactions(items int, status string) ([]wallet_cli.Transaction, error) {
 	var query []models.Transaction
 
-	err := gorm.DB.Order("id desc").Limit(10).Find(&query, "status = ?", status).Error
+	var err error
+	if status == "all" {
+		err = gorm.DB.Order("id desc").Limit(items).Find(&query).Error
+	} else {
+		err = gorm.DB.Order("id desc").Limit(items).Find(&query, "status = ?", status).Error
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +111,7 @@ func (g GormTransaction) FindTransactions(items int, status string) ([]wallet_cl
 		currency := wallet_cli.NewCurrency(cur.ID, cur.Symbol, cur.Network, cur.Type, cur.URI, cur.ContractAddress)
 		address := wallet_cli.NewAddressWithFields(addr.ID, addr.Code, addr.Derivation)
 
-		transactions = append(transactions, *wallet_cli.NewTransactionWithFields(v.Txid, v.Amount, v.Fee, v.Status, v.BlockHash, v.BlockConfirmatios, v.ToAddress, currency, address))
+		transactions = append(transactions, *wallet_cli.NewTransactionWithFields(v.Txid, v.Amount, v.Fee, v.Status, v.BlockConfirmatios, v.ToAddress, currency, address))
 	}
 
 	return transactions, nil

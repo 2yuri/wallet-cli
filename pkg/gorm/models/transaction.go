@@ -8,7 +8,6 @@ type Transaction struct {
 	Amount string
 	Fee string
 	Status string
-	BlockHash string
 	BlockConfirmatios string
 	ToAddress string
 	CurrencyID uint

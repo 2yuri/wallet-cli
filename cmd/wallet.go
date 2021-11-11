@@ -56,7 +56,7 @@ var listWallCmd = &cobra.Command{
 		currSvc = repository.NewGormCurrency()
 		c, err := currSvc.GetCurrency(network, currency)
 		if err != nil {
-			log.Fatalln(err)
+			log.Fatalln("cannot get currency", err)
 		}
 
 		fmt.Printf("Uuid:     %s\n", wallet.Uuid())
@@ -67,14 +67,14 @@ var listWallCmd = &cobra.Command{
 			log.Fatalln("cannot get adresses")
 		}
 
-		for _, v := range addresses {
+		for i, v := range addresses {
 			b, err := balanceSvc.GetBalance(&v, c)
 			if err != nil {
 				log.Fatalf("cannot get balance: %v\n", err)
 			}
 
-			fmt.Printf("---------- ADDRESS: %v ----------\n", 1)
-			fmt.Printf("Coin:                %s\n", c.Symbol())
+			fmt.Printf("---------- ADDRESS: %v ----------\n", i + 1)
+			fmt.Printf("Currency:            %s\n", c.Symbol())
 			fmt.Printf("Network:             %s\n", c.Network())
 			fmt.Printf("Address:             %s\n", v.Code())
 			fmt.Printf("Balance Confirmed:   %s\n", b.Confimated())

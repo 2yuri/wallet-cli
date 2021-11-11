@@ -55,6 +55,8 @@ var trxSvc wallet_cli.TransactionActions
 var currRepo wallet_cli.CurrencyStorage
 var walletRepo wallet_cli.WalletStorage
 var addressRepo wallet_cli.AddressStorage
+var trxRepo wallet_cli.TransactionStorage
+
 
 func init() {
 	cobra.OnInitialize(initConfig)
@@ -68,6 +70,7 @@ func init() {
 	walletRepo = repository.NewGormWallet()
 	addressRepo = repository.NewGormAddress()
 	trxSvc = transaction.NewTransactionService()
+	trxRepo = repository.NewGormTransaction()
 }
 
 

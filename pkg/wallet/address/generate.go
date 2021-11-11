@@ -31,7 +31,6 @@ func (a *AddressService) Generate(men string, derivation string) (string, error)
 		return "", errors.New("cannot generate new address")
 	}
 
-
 	return account.Address.Hex(), nil
 }
 

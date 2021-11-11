@@ -54,6 +54,12 @@ func RunSeeds(){
 		log.Fatalln("cannot run seeds: ", err)
 	}
 
+	if err := CreateCurrency(tx,"BNB", "TEST", "https://data-seed-prebsc-1-s1.binance.org:8545", "native", ""); err != nil {
+		tx.Rollback()
+		log.Fatalln("cannot run seeds: ", err)
+	}
+
+
 	tx.Commit()
 }
 
