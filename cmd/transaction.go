@@ -23,12 +23,12 @@ var transactionCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalln(err)
 		}
-		items, err := cmd.Flags().GetString("items")
+		count, err := cmd.Flags().GetString("count")
 		if err != nil {
 			log.Fatalln(err)
 		}
 
-		getTransactions(uuid, password, status, items)
+		getTransactions(uuid, password, status, count)
 	},
 }
 
@@ -38,7 +38,7 @@ func init(){
 	transactionCmd.Flags().StringP("wallet", "w", "", "wallet uuid")
 	transactionCmd.Flags().StringP("pass", "p", "", "wallet password")
 	transactionCmd.Flags().StringP("status", "s", "", "transaction status")
-	transactionCmd.Flags().StringP("items", "i", "", "total of transaction to list")
+	transactionCmd.Flags().StringP("count", "c", "", "total of transaction to list")
 }
 
 func getTransactions(uuid, pass, status, items string) {
